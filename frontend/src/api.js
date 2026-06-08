@@ -1,37 +1,57 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "https://task-management-systems-ka10.onrender.com";
 
 function getToken() {
   return localStorage.getItem("token");
 }
 
 async function request(path, options = {}) {
-  const token = getToken();
-  const headers = {
-    "Content-Type": "application/json",
-    ...(options.headers || {}),
-  };
+  try {
+    const token = getToken();
 
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
+    const headers = {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+    };
+
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${API_URL}${path}`, {
+      ...options,
+      headers,
+    });
+
+    // Handle no content response
+    if (response.status === 204) {
+      return null;
+    }
+
+    // Parse response safely
+    let data;
+    try {
+      data = await response.json();
+    } catch (err) {
+      data = {};
+    }
+
+    // Handle errors properly
+    if (!response.ok) {
+      throw new Error(data.detail || "Request failed");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("API Error:", error.message);
+    throw error;
   }
-
-  const response = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers,
-  });
-
-  if (response.status === 204) {
-    return null;
-  }
-
-  const data = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    throw new Error(data.detail || "Something went wrong");
-  }
-
-  return data;
 }
+
+/* =========================
+   AUTH APIs
+========================= */
 
 export function loginUser(credentials) {
   return request("/user/login", {
@@ -50,6 +70,10 @@ export function registerUser(user) {
 export function checkAuth() {
   return request("/user/is_auth");
 }
+
+/* =========================
+   TASK APIs
+========================= */
 
 export function getTasks() {
   return request("/tasks/all_tasks");
