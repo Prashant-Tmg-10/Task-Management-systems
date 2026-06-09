@@ -100,27 +100,36 @@ function AppShell({ user, tasks, refreshTasks, setUser, setToken }) {
       </aside>
 
       <div className="lg:pl-72">
-        <header className="sticky top-0 z-10 border-b border-[#dbe3e0] bg-white/85 px-4 py-4 backdrop-blur sm:px-6 lg:px-8">
-          <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
-            <div>
+        <header className="sticky top-0 z-10 border-b border-[#dbe3e0] bg-white/90 px-4 py-4 backdrop-blur sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-6xl">
+            <div className="flex items-center justify-between gap-4">
+              <div className="min-w-0">
               <p className="text-sm font-semibold text-[#347065]">Hello, {user?.name || "there"}</p>
               <h2 className="text-xl font-bold text-[#18202f]">Task Management</h2>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="focus-ring shrink-0 rounded-lg border border-[#f0b8b8] px-3 py-2 text-sm font-bold text-[#c84343] transition hover:bg-[#fff1f1] lg:hidden"
+              >
+                Logout
+              </button>
             </div>
-            <div className="flex gap-2 lg:hidden">
+
+            <nav className="mt-4 flex gap-2 overflow-x-auto pb-1 lg:hidden">
               {navItems.map((item) => (
                 <NavLink
                   key={item.to}
                   to={item.to}
                   className={({ isActive }) =>
-                    `rounded-lg px-3 py-2 text-sm font-semibold ${
-                      isActive ? "bg-[#347065] text-white" : "bg-white text-[#5f6b7a]"
+                    `shrink-0 rounded-lg px-4 py-2 text-sm font-semibold ${
+                      isActive ? "bg-[#347065] text-white shadow-sm" : "bg-[#f7faf9] text-[#5f6b7a]"
                     }`
                   }
                 >
                   {item.label}
                 </NavLink>
               ))}
-            </div>
+            </nav>
           </div>
         </header>
 
